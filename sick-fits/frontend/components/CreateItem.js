@@ -7,6 +7,9 @@ import Form from './styles/Form';
 import formatMoney from '../lib/formatMoney';
 import Error from './ErrorMessage';
 
+const CLOUDINARY_ENDPOINT =
+  'https://api.cloudinary.com/v1_1/dbmr8syq6/image/upload';
+
 export const CREATE_ITEM_MUTATION = gql`
   mutation CREATE_ITEM_MUTATION(
     $title: String!
@@ -49,8 +52,27 @@ export default class CreateItem extends Component {
     const res = await createItem();
     console.log(res);
     Router.push({
-      pathname: './item',
+      pathname: '/item',
       query: { id: res.data.createItem.id }
+    });
+  };
+
+  uploadFile = async e => {
+    const files = e.target.files;
+    const data = new FormData();
+    data.append('file', files[0]);
+    data.append('upload_preset', 'sickfits');
+
+    const response = await fetch(CLOUDINARY_ENDPOINT, {
+      method: 'POST',
+      body: data
+    });
+
+    const file = await response.json();
+
+    this.setState({
+      image: file.secure_url,
+      largeImage: file.eager[0].secure_url
     });
   };
 
@@ -86,6 +108,18 @@ export default class CreateItem extends Component {
                   onChange={this.handleChange}
                 />
               </label>
+              <label htmlFor='file'>
+                Image
+                <input
+                  type='file'
+                  id='file'
+                  name='file'
+                  placeholder='Upload an image'
+                  required
+                  onChange={this.uploadFile}
+                />
+              </label>
+              {image && <img src={image} width='200' alt='Upload preview' />}
               <label htmlFor='description'>
                 Description
                 <textarea
