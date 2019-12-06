@@ -4,6 +4,11 @@ const db = require('./db');
 
 const server = createServer();
 
+server.express.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 server.start(
   {
     cors: {
