@@ -3,7 +3,7 @@ import CreateItem from '../components/CreateItem';
 const Sell = () => {
   return (
     <div>
-      <CreateItem></CreateItem>
+      <CreateItem />
     </div>
   );
 };
